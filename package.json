@@ -1,5 +1,5 @@
 {
-  "name": "new-project",
+  "name": "currency-converter",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cass1618/new-project.git"
+    "url": "git+https://github.com/cass1618/currency-converter.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cass1618/new-project/issues"
+    "url": "https://github.com/cass1618/currency-converter/issues"
   },
-  "homepage": "https://github.com/cass1618/new-project#readme",
+  "homepage": "https://github.com/cass1618/currency-converter#readme",
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.6.0",
     "clean-webpack-plugin": "^3.0.0",
