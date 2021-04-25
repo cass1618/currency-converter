@@ -8,10 +8,10 @@ import Codes from './js/codes';
 function getCurrencyInfo(response, amountUSD, currencyCode) {
   if (response.conversion_rates && response.time_last_update_utc) {
     const exchangeRate = eval("response.conversion_rates."+currencyCode);
-    const convertedCurrency = formatCurrency(amountUSD * exchangeRate);
+    const convertedCurrency = formatCurrency(amountUSD * exchangeRate, currencyCode);
     $("#display").html(`${convertedCurrency}`);
-    } else {
-    $("#errors").append(`${response}`);
+  } else {
+    $("#errors").html(`Error loading currency info. API ERROR: ${response["error-type"]}`);
   }
 } 
 
@@ -22,9 +22,9 @@ function getCurrencyCodes(response) {
       $("#currencyTypeSelector").append(`<option value="${element}">${element}</option>`);
     });
     const lastUpdate = response.time_last_update_utc;
-    $("#lastUpdate").html(`Exchange rates last updated ${lastUpdate} - ExchangeRate-API.com`)
+    $("#lastUpdate").html(`Exchange rates last updated ${lastUpdate} - ExchangeRate-API.com`);
   } else {
-    $("#errors").append(`${response}`);
+    $("#errors").html(`Error loading currency types - API ERROR: ${response["error-type"]}`);
   }
 } 
 
@@ -33,9 +33,8 @@ function getCurrencyName(response, currencyCode) {
     let codeToNameArray = adjustArray(response.supported_codes);
     const currencyName = codeToNameArray[1][codeToNameArray[0].indexOf(currencyCode)];
     $("#currencyName").html(currencyName);
-    console.log(currencyName);
   } else {
-    $("#errors").append(`${response}`);
+    $("#errors").html(`Error loading currency names - API ERROR: ${response["error-type"]}`);
   }
 }
 
@@ -49,10 +48,10 @@ function adjustArray(codesNamesArray) {
   return ([codes,names]);
 }
 
-function formatCurrency(number) {
+function formatCurrency(number, currencyCode) {
   let currency = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: currencyCode,
     minimumFractionDigits: 2,
   });
   return currency.format(number);
@@ -74,6 +73,6 @@ $(document).ready(function () {
       }).then(Currency.getExchangeRates() 
         .then(function(response) {
           getCurrencyInfo(response, amountUSD, currencyCode);
-        }))
+        }));
   });
 });

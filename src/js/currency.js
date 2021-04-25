@@ -9,7 +9,7 @@ export default class Currency {
         return response.json();
       }
     } catch (error) {
-      return error;
+      return Error(error);
     }
   }
 }

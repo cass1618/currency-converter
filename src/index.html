@@ -11,13 +11,16 @@
   <div class="container">
     <form id="main" autocomplete="off">
       <div id="lastUpdate"></div>
-      <label for="amount">Enter amount in $USD: </label>
-      <input type="text" id="amount">
-      <label for="currencyCode">What currency would you like to convert to?</label>
-      <div id="currencyTypeSelectorDiv"><select name="currency" id="currencyTypeSelector"></select></div>
+      <div>
+        <label for="amount">Enter amount in $USD: </label>
+        <input type="text" id="amount">
+      </div>
+      
+      <div id="currencyTypeSelectorDiv"><label for="currencyTypeSelector">Convert to: </label><select name="currency" id="currencyTypeSelector"></select></div>
       <div id="currencyName"></div>
       
     </form>
+  <div id="errors"></div>
   <div id="display"></div>
 
   </div>
