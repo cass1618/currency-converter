@@ -3,54 +3,77 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
 import Currency from './js/currency.js';
+import Codes from './js/codes';
 
-function getCurrencyInfo(response, amountUSD) {
-  const exchangeRate = response.conversion_rates.EUR;
-  const convertedCurrency = amountUSD * exchangeRate;
+function getCurrencyInfo(response, amountUSD, currencyCode) {
   if (response.conversion_rates && response.time_last_update_utc) {
-    $("#currencyName").text(`Amount in AED as of ${response.time_last_update_utc} is ${convertedCurrency}`);
-  } else {
-    $("#errors").text(`${response}`);
+    const exchangeRate = eval("response.conversion_rates."+currencyCode);
+    const convertedCurrency = formatCurrency(amountUSD * exchangeRate);
+    $("#display").html(`${convertedCurrency}`);
+    } else {
+    $("#errors").append(`${response}`);
   }
 } 
 
-// function formatCurrency(number) {
-//   let currency = new Intl.NumberFormat('en-US', {
-//     style: 'currency',
-//     currency: 'USD',
-//     minimumFractionDigits: 2,
-//   });
-//   return currency.format(number);
-// }
+function getCurrencyCodes(response) {
+  if (response.conversion_rates && response.time_last_update_utc) {
+    const codes = Object.keys(response.conversion_rates);
+    codes.forEach(function (element) {
+      $("#currencyTypeSelector").append(`<option value="${element}">${element}</option>`);
+    });
+    const lastUpdate = response.time_last_update_utc;
+    $("#lastUpdate").html(`Exchange rates last updated ${lastUpdate} - ExchangeRate-API.com`)
+  } else {
+    $("#errors").append(`${response}`);
+  }
+} 
+
+function getCurrencyName(response, currencyCode) {
+  if (response.supported_codes) {
+    let codeToNameArray = adjustArray(response.supported_codes);
+    const currencyName = codeToNameArray[1][codeToNameArray[0].indexOf(currencyCode)];
+    $("#currencyName").html(currencyName);
+    console.log(currencyName);
+  } else {
+    $("#errors").append(`${response}`);
+  }
+}
+
+function adjustArray(codesNamesArray) {
+  let codes = [];
+  let names = [];
+  codesNamesArray.forEach(function(element) {
+    codes.push(element[0]);
+    names.push(element[1]);
+  });
+  return ([codes,names]);
+}
+
+function formatCurrency(number) {
+  let currency = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  });
+  return currency.format(number);
+}
+
 
 $(document).ready(function () {
-  $("#main").submit(function (event) {
-    event.preventDefault();
-    $("#errors").html("");
-    let amountUSDString = $("#amount").val().split('.');
-    let amountUSDWholeString = amountUSDString[0];
-    let amountUSDDecimalString;
-    if (amountUSDString[1]) {
-      amountUSDDecimalString = amountUSDString[1];
-    } else {
-      amountUSDDecimalString = "00";
-    }
-    
-    console.log("amountUSDWholeString "+amountUSDWholeString);
-    console.log("amountUSDDecimalString "+amountUSDDecimalString);
-    let amountUSD = 10;
-    let amountUSDWholeSplit = amountUSDWholeString.split('');
-    let amountUSDDecimalSplit = amountUSDDecimalString.split('');
-    console.log("amountUSDWhole "+amountUSDWholeSplit);
-    console.log("amountUSDDecimal "+amountUSDDecimalSplit);
+  Currency.getExchangeRates() 
+    .then(function(response) {
+      getCurrencyCodes(response);
+    });
 
-    //console.log("amount USD collected is: "+amountUSD);
-    //const currencyName = $("#currencyName").val();
-    $("#currencyName").val("");
-    $("#amount").val("");
-    Currency.getExchangeRates() 
-      .then(function (response) {
-        getCurrencyInfo(response, amountUSD);
-      });
+  $("#currencyTypeSelector").on('change',function() {
+    const currencyCode = ($("#currencyTypeSelector").val());
+    const amountUSD = parseFloat($("#amount").val());
+    Codes.getCurrencyNames() 
+      .then(function(response) {
+        getCurrencyName(response, currencyCode);
+      }).then(Currency.getExchangeRates() 
+        .then(function(response) {
+          getCurrencyInfo(response, amountUSD, currencyCode);
+        }))
   });
 });
