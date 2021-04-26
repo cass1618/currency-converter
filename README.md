@@ -16,13 +16,23 @@ This webapp uses ExchangeRate-API to convert USD to other currency types.  First
 
 ## Setup Instructions
 
-[Click here to access live web page](https://cass1618.github.io/currency-converter/)
-
 To download project and run locally:
 1. Clone the repository from GitHub
 1. Navigate into the currency-converter directory in terminal
-1. enter command `npm install`
-1. enter command `npm run start`
+1. Add .env file to currency-converter directory using command 
+```sh
+$ touch .env
+```
+4. Obtain an API Key from [ExchangeRate-API.com](https://app.exchangerate-api.com/sign-up)
+1. Enter your key in the .env file API_KEY=[your API key]
+<br/>  Example: `API_KEY=1a2b3b4c5d6e7f8g`
+1. Enter the following commands in terminal:
+
+```sh
+$ npm install
+$ npm run start
+```
+
 
 ## Known bugs
 
