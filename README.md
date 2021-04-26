@@ -38,7 +38,7 @@ $ npm run start
 
 This webpage has no known bugs.
 
-## Licence
+## License
 
 [MIT](https://opensource.org/licenses/MIT)
 

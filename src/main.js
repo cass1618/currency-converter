@@ -4,12 +4,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
 import Currency from './js/currency.js';
 import Codes from './js/codes';
+import Utility from './js/utility.js';
 
 function getCurrencyInfo(response, amountUSD, currencyCode) {
   if (response.conversion_rates && response.time_last_update_utc) {
     if (eval("response.conversion_rates."+currencyCode)) {
       const exchangeRate = eval("response.conversion_rates."+currencyCode);
-      const convertedCurrency = formatCurrency(amountUSD * exchangeRate, currencyCode);
+      const convertedCurrency = Utility.formatCurrency(amountUSD * exchangeRate, currencyCode);
       $("#display").html(`${convertedCurrency}`);
     } else {
       $("#errors").html(`Currency code not found.`);
@@ -39,7 +40,7 @@ function getCurrencyCodes(response) {
 
 function getCurrencyName(response, currencyCode) {
   if (response.supported_codes) {
-    let codeToNameArray = createCodeToNamesArray(response.supported_codes);
+    let codeToNameArray = Utility.createCodeToNamesArray(response.supported_codes);
     const currencyName = codeToNameArray[1][codeToNameArray[0].indexOf(currencyCode)];
     $("#currencyName").html(currencyName);
   } else if (response["error-type"]){
@@ -47,25 +48,6 @@ function getCurrencyName(response, currencyCode) {
   } else {
     $("#errors").html(`${response}`);
   }
-}
-
-function createCodeToNamesArray(codesNamesArray) {
-  let codes = [];
-  let names = [];
-  codesNamesArray.forEach(function(element) {
-    codes.push(element[0]);
-    names.push(element[1]);
-  });
-  return ([codes,names]);
-}
-
-function formatCurrency(number, currencyCode) {
-  let currency = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currencyCode,
-    minimumFractionDigits: 2,
-  });
-  return currency.format(number);
 }
 
 $(document).ready(function () {
